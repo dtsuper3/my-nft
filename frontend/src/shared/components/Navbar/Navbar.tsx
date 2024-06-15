@@ -8,15 +8,18 @@ import { Button } from "@/shared/components";
 import style from "@/shared/components/Navbar/Navbar.module.css";
 import Image from 'next/image';
 import Discover from './Discover/Discover';
+import { useNFTMarketplace } from '@/shared/context/NFTMarketplaceContext';
+import Link from 'next/link';
 
 function Navbar() {
+    const { currentAccount, connectWallet } = useNFTMarketplace();
     const [discover, setDiscover] = useState(false);
     const [help, setHelp] = useState(false);
     const [notification, setNotification] = useState(false);
     const [profile, setProfile] = useState(false);
     const [openSideMenu, setOpenSideMenu] = useState(false);
 
-    const openMenu = e => {
+    const openMenu = (e: any) => {
         const btnText = e.target.innerText;
         if (btnText === "Discover") {
             setDiscover(true);
@@ -49,6 +52,14 @@ function Navbar() {
                         <div className={style.navbar_container_right_discover_box}>
                             <Discover />
                         </div>
+                    </div>
+                    <div className={style.navbar_container_right_button}>
+                        {
+                            currentAccount === "" ?
+                                <button onClick={connectWallet}>Connect</button>
+                                :
+                                <Link href={"/"}>Create</Link>
+                        }
                     </div>
                 </div>
             </div>
