@@ -1,0 +1,35 @@
+.transfer_box_box_left{
+    
+}
+.transfer_box_box_right{
+
+}
+
+.transfer_box_box_right_info_desktop{
+
+}
+
+.transfer_box_box_right_info_mobile{
+    
+}
+.transfer_box_box_right_box{
+
+
+}
+
+.transfer_box_history_item{
+    max-height: 400px;
+}
+
+.transfer_box_history_item img{
+    object-fit: contain;    
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.transfer_box_history_item p{
+    word-break: break-all;
+}
+.transfer_box_history_item strong{
+    font-weight: 600;
+}

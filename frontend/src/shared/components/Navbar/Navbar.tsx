@@ -3,13 +3,15 @@ import React, { useState } from 'react'
 import { MdNotifications } from "react-icons/md";
 import { BsSearch } from 'react-icons/bs';
 import { CgMenuLeft, CgMenuRight } from 'react-icons/cg';
-import { Button } from "@/shared/components";
 
 import style from "@/shared/components/Navbar/Navbar.module.css";
 import Image from 'next/image';
-import Discover from './Discover/Discover';
 import { useNFTMarketplace } from '@/shared/context/NFTMarketplaceContext';
 import Link from 'next/link';
+import { Box, Button, Container, Group, TextInput } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+
+import { Discover, HelpCenter, Notification, Profile, Sidebar } from "@/shared/components/Navbar";
 
 function Navbar() {
     const { currentAccount, connectWallet } = useNFTMarketplace();
@@ -19,6 +21,7 @@ function Navbar() {
     const [profile, setProfile] = useState(false);
     const [openSideMenu, setOpenSideMenu] = useState(false);
 
+
     const openMenu = (e: any) => {
         const btnText = e.target.innerText;
         if (btnText === "Discover") {
@@ -27,44 +30,73 @@ function Navbar() {
     }
 
     return (
-        <div className={style.navbar}>
-            <div className={style.navbar_container}>
+        <Container size={"xl"}>
+            <Box className={style.navbar}>
+                <Group
+                    justify='space-between'
+                    h="100%"
+                    className={style.navbar_container}>
 
-                <div className={style.navbar_container_left}>
-                    <div className={style.logo}>
-                        <Image
-                            width={100}
-                            height={100}
-                            src={"/images/logo.svg"}
-                            alt='NFT Marketplace' />
-                    </div>
-                    <div className={style.navbar_container_left_box_input}>
-                        <div className={style.navbar_container_left_box_input_box}>
-                            <input type="text" placeholder='Search NFT' />
-                            <BsSearch onClick={() => { }} className={style.search_icon} />
-                        </div>
-                    </div>
-                </div>
+                    <Group
+                        h="100%"
+                        gap={"lg"}
+                        visibleFrom="sm"
+                        className={style.navbar_container_left}>
+                        <Link href={"/"} className={style.logo}>
+                            <Image
+                                width={100}
+                                height={100}
+                                src={"/images/logo.svg"}
+                                alt='NFT Marketplace' />
+                        </Link>
+                        <Box className={style.navbar_container_left_box_input}>
+                            <Box className={style.navbar_container_left_box_input_box}>
+                                <TextInput
+                                    size='md'
+                                    radius={"lg"}
+                                    type="text"
+                                    placeholder='Search NFT'
+                                    rightSection={<BsSearch onClick={() => { }} className={style.search_icon} />} />
+                            </Box>
+                        </Box>
+                    </Group>
 
-                <div className={style.navbar_container_right}>
-                    <div className={style.navbar_container_right_discover}>
-                        <p onClick={() => { }}>Discover </p>
-                        <div className={style.navbar_container_right_discover_box}>
+                    <Group
+                        gap={"xl"}
+                        align='center'
+                        className={style.navbar_container_right}>
+                        <Box className={style.navbar_container_right_discover}>
                             <Discover />
-                        </div>
-                    </div>
-                    <div className={style.navbar_container_right_button}>
-                        {
-                            currentAccount === "" ?
-                                <button onClick={connectWallet}>Connect</button>
-                                :
-                                <Link href={"/"}>Create</Link>
-                        }
-                    </div>
-                </div>
-            </div>
+                        </Box>
+                        <Box className={style.navbar_container_right_help_center}>
+                            <HelpCenter />
+                        </Box>
+                        <Box className={style.navbar_container_right_help_notification}>
+                            <Notification />
+                        </Box>
 
-        </div>
+                        <Box className={style.navbar_container_right_button}>
+                            {
+                                currentAccount === "" ?
+                                    <Button
+                                        onClick={connectWallet}>Connect</Button>
+                                    :
+                                    <Button
+                                        size='md'
+                                        radius={"xl"}
+                                        component={Link}
+                                        href={"/"}
+                                        color='gray'
+                                    >Create</Button>
+                            }
+                        </Box>
+                        <Box className={style.navbar_container_right_profile}>
+                            <Profile />
+                        </Box>
+                    </Group>
+                </Group>
+            </Box>
+        </Container>
     )
 }
 
