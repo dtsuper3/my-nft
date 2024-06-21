@@ -1,8 +1,7 @@
 import { useNFTMarketplace } from '@/shared/context/NFTMarketplaceContext'
 import React, { useEffect } from 'react'
 
-function Home() {
-  const {  } = useNFTMarketplace();
+function Home() {  
   
   return (
     <div>index</div>

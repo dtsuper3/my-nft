@@ -56,7 +56,7 @@ function Discover() {
       <Menu.Dropdown>
         {
           data.map(i => (
-            <Menu.Item key={i.name}>
+            <Menu.Item key={i.name}>              
               <Link href={i.href}>{i.name}</Link>
             </Menu.Item>
           ))

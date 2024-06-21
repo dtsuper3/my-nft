@@ -1,9 +1,8 @@
 import { Skeleton } from '@mantine/core';
-import { useQuery } from '@tanstack/react-query';
 import { type LottieComponentProps } from 'lottie-react';
-import { Suspense, lazy, useEffect, useRef, useState } from 'react';
+import { Suspense, lazy, useState, useEffect } from 'react';
 
-const LazyLottieComponent = lazy(() => import('lottie-react'));
+const LazyLottieComponent: any = lazy(() => import('lottie-react'));
 
 interface LottieProps<T extends Record<string, unknown>> {
   getAnimationData: () => Promise<T>;
@@ -13,19 +12,39 @@ interface LottieProps<T extends Record<string, unknown>> {
 export function LazyLottie<T extends Record<string, unknown>>({
   getAnimationData,
   id,
-  ref,
   ...props
 }: LottieProps<T> & Omit<LottieComponentProps, 'animationData'>) {
-  const { data } = useQuery({
-    queryKey: [id],
-    queryFn: async () => {
-      void import('lottie-react'); // Trigger the library lazy load even if the animationData is not ready
-      return getAnimationData();
-    },
-    enabled: typeof window !== 'undefined',
-  });
+  const [data, setData] = useState<T | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  if (!data) return <Skeleton height={props.height} width={props.width} />;
+  useEffect(() => {
+    let isMounted = true;
+
+    async function fetchData() {
+      try {
+        // Trigger the library lazy load even if the animationData is not ready
+        await import('lottie-react');
+        const animationData = await getAnimationData();
+        if (isMounted) {
+          setData(animationData);
+          setLoading(false);
+        }
+      } catch (error) {
+        if (isMounted) {
+          setLoading(false);
+          console.error('Failed to load animation data', error);
+        }
+      }
+    }
+
+    fetchData();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [getAnimationData]);
+
+  if (loading) return <Skeleton height={props.height} width={props.width} />;
 
   return (
     <Suspense fallback={<Skeleton height={props.height} width={props.width} />}>

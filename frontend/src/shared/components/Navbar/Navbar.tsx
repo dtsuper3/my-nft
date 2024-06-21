@@ -1,9 +1,7 @@
 "use client"
 import React, { useState } from 'react'
 
-import { MdNotifications } from "react-icons/md";
 import { BsSearch } from 'react-icons/bs';
-import { CgMenuLeft, CgMenuRight } from 'react-icons/cg';
 
 import style from "@/shared/components/Navbar/Navbar.module.css";
 import Image from 'next/image';
@@ -86,7 +84,7 @@ function Navbar() {
                                         size='md'
                                         radius={"xl"}
                                         component={Link}
-                                        href={"/"}
+                                        href={"/create-nft"}
                                         color='gray'
                                     >Create</Button>
                             }

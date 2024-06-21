@@ -1,21 +1,23 @@
 import DropZone from '@/shared/components/DropZone';
-import { Avatar, Box, Button, Card, Divider, Flex, Grid, Loader, ScrollArea, Text, TextInput, Textarea } from '@mantine/core';
-import Image from 'next/image';
+import { Avatar, Box, Button, Card, Divider, Flex, Grid, Loader, Text, TextInput, Textarea } from '@mantine/core';
 import React, { useCallback, useState } from 'react'
 import { MdOutlineHttps, MdPercent } from 'react-icons/md';
 import styles from "@/features/create-nft/UploadNFT/upload-nft.module.css";
 import { TiTick } from 'react-icons/ti';
 import { AiFillPropertySafety } from 'react-icons/ai';
-import axios from 'axios';
+import { useNFTMarketplace } from '@/shared/context/NFTMarketplaceContext';
+import { BiDollar } from 'react-icons/bi';
 
 function UploadNFT() {
-    const [imageId, setImageId] = useState();
+    const { uploadToIPFS, createNFT } = useNFTMarketplace();
     const [itemName, setItemName] = useState("");
     const [website, setWebsite] = useState("");
     const [description, setDescription] = useState("");
     const [royalties, setRoyalties] = useState("");
     const [category, setCategory] = useState("");
     const [properties, setProperties] = useState("");
+    const [imageUrl, setImageUrl] = useState<string | null>(null);
+    const [price, setPrice] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
     const categoryArray = [
@@ -41,25 +43,17 @@ function UploadNFT() {
         },
     ]
 
-    const handleClick = useCallback(() => {
+    const handleClick = useCallback(async () => {
+        setIsLoading(true);
+        await createNFT({ name: itemName, description, price, imageUrl })
+        setIsLoading(false);
 
-    }, []);
+    }, [createNFT, description, imageUrl, itemName, price]);
 
     const uploadFile = useCallback(async (file: any) => {
-        try {
-            console.log("file", file)
-            const data = new FormData();
-            data.set("file", file);
-            const res = await axios.post("/api/upload-file", 
-                data
-            )
-            if (res.data?.ipfsHash) {
-                setImageId(res.data?.ipfsHash);
-            }
-        } catch (error) {
-
-        }
-    }, []);
+        const imageUrl = await uploadToIPFS(file);
+        setImageUrl(imageUrl);
+    }, [uploadToIPFS]);
 
     return (
         <Box>
@@ -145,28 +139,46 @@ function UploadNFT() {
                                 })
                             }
                         </Flex>
-                        <Flex
+                        <Grid
                             mt="lg"
-                            gap={"lg"}>
-                            <TextInput
-                                withAsterisk
-                                label="Royalties"
-                                leftSection={
-                                    <MdPercent />
-                                }
-                                placeholder='Royalties'
-                                value={royalties}
-                                onChange={e => setRoyalties(e.target.value)} />
-                            <TextInput
-                                withAsterisk
-                                label="Properties"
-                                leftSection={
-                                    <AiFillPropertySafety />
-                                }
-                                placeholder='Properties'
-                                value={properties}
-                                onChange={e => setProperties(e.target.value)} />̦
-                        </Flex>
+                            align="center">
+                            <Grid.Col
+                                span={{ base: 12, lg: 4 }}>
+                                <TextInput
+                                    withAsterisk
+                                    label="Royalties"
+                                    leftSection={
+                                        <MdPercent />
+                                    }
+                                    placeholder='Royalties'
+                                    value={royalties}
+                                    onChange={e => setRoyalties(e.target.value)} />
+                            </Grid.Col>
+                            <Grid.Col
+                                span={{ base: 12, lg: 4 }}>
+                                <TextInput
+                                    withAsterisk
+                                    label="Properties"
+                                    leftSection={
+                                        <AiFillPropertySafety />
+                                    }
+                                    placeholder='Properties'
+                                    value={properties}
+                                    onChange={e => setProperties(e.target.value)} />
+                            </Grid.Col>
+                            <Grid.Col
+                                span={{ base: 12, lg: 4 }}>
+                                <TextInput
+                                    withAsterisk
+                                    label="Price"
+                                    leftSection={
+                                        <BiDollar />
+                                    }
+                                    placeholder='Price'
+                                    value={price}
+                                    onChange={e => setPrice(e.target.value)} />
+                            </Grid.Col>
+                        </Grid>
                     </Box>
                     <Flex
                         justify={"center"}>

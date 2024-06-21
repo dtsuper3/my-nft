@@ -1,11 +1,10 @@
+"use client"
 import UploadNFT from '@/features/create-nft/UploadNFT/UploadNFT';
-import { useNFTMarketplace } from '@/shared/context/NFTMarketplaceContext'
 import MainLayout from '@/shared/layout/MainLayout'
 import { Box, Divider, Text, Title } from '@mantine/core'
 import React from 'react'
 
 function CreateNFT() {
-    const { uploadToIPFS, createNFT } = useNFTMarketplace();
     return (
         <MainLayout size={"lg"}>
             <Box>

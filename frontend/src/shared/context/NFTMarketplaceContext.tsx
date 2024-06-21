@@ -1,3 +1,4 @@
+"use client"
 import React, { useContext, useEffect, useState } from 'react'
 import web3Modal from "web3modal";
 import { ethers } from "ethers";
@@ -8,6 +9,9 @@ import {
     TransferFundsAddress
 } from '../../../../config';
 import axios from 'axios';
+import { notifications } from '@mantine/notifications';
+import { useRouter } from 'next/navigation';
+import { INFTItemData } from '@/types/NFT';
 
 
 // Fetching smart contract
@@ -51,13 +55,15 @@ const connectToTransferFunds = async () => {
     }
 }
 
+
+
 interface NFTMarketplaceContextType {
     checkIfWalletIsConnected: () => void;
     connectWallet: () => void;
-    uploadToIPFS: (file: any) => void;
-    createNFT: (formInput: any, fileUrl: string, router?: any) => void,
-    fetchNFTS: () => void;
-    fetchMyNFTsOrListedNFTs: (type: string) => void;
+    uploadToIPFS: (file: any) => Promise<string | null>;
+    createNFT: (formInput: any) => void,
+    fetchNFTS: () => Promise<INFTItemData[]>;
+    fetchMyNFTsOrListedNFTs: (type: string) => Promise<INFTItemData[]>;
     buyNFT: (nft: any) => void;
     createSale: (url: string, formInputPrice: string, isReselling?: any, id?: any) => void;
     currentAccount: string;
@@ -72,10 +78,10 @@ interface NFTMarketplaceContextType {
 const NFTMarketplaceContext = React.createContext<NFTMarketplaceContextType>({
     checkIfWalletIsConnected: () => { },
     connectWallet: () => { },
-    uploadToIPFS: () => { },
+    uploadToIPFS: async () => null,
     createNFT: () => { },
-    fetchNFTS: () => { },
-    fetchMyNFTsOrListedNFTs: () => { },
+    fetchNFTS: async () => [],
+    fetchMyNFTsOrListedNFTs: async () => [],
     buyNFT: () => { },
     createSale: () => { },
     currentAccount: "",
@@ -93,6 +99,7 @@ function NFTMarketplaceContextProvider({ children }: any) {
     const [transactions, setTransactions] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [accountBalance, setAccountBalance] = useState("");
+    const router = useRouter();
 
     // Check if wallet is connected
     const checkIfWalletIsConnected = async () => {
@@ -137,10 +144,15 @@ function NFTMarketplaceContextProvider({ children }: any) {
     // Upload to IPFS
     const uploadToIPFS = async (file: any) => {
         try {
-            const url = axios("/api/upload-file",)
-            return url;
+            const data = new FormData();
+            data.set("file", file);
+            const res = await axios.post("/api/upload-file",
+                data
+            )
+            return res.data?.url as string;
         } catch (error) {
             console.log("Something went wrong on uploadToIPFS ", error);
+            return null;
         }
     }
 
@@ -149,7 +161,10 @@ function NFTMarketplaceContextProvider({ children }: any) {
         try {
             const price = ethers.utils.parseUnits(formInputPrice, "ether");
             const contract: any = await connectingWithSmartContract();
-            const listingPrice = await contract.getListingPrice().toString();
+            console.log("listingPrice", contract, price)
+            const listingPrice = await contract.getListingPrice();
+            console.log("listingPrice", listingPrice.toString())
+
             const transaction = !isReselling ?
                 await contract.createToken(url, price, { value: listingPrice }) :
                 await contract.resellToken(id, price, { value: listingPrice });
@@ -161,19 +176,37 @@ function NFTMarketplaceContextProvider({ children }: any) {
     }
 
     // Create NFT
-    const createNFT = async (formInput: any, fileUrl: string, router: any) => {
+    const createNFT = async (formInput: any) => {
         try {
-            const { name, description, price } = formInput;
-            if (!name || !description || !price || !fileUrl) {
-                console.log("Data is missing");
+            const { name, description, price, imageUrl } = formInput;
+            if (!name || !description || !price || !imageUrl) {
+                notifications.show({
+                    message: 'Validation error',
+                    color: "yellow",
+                    autoClose: true,
+                    withCloseButton: true,
+                })
                 return
             }
-            const data = JSON.stringify({ name, description, image: fileUrl });
-            // Todo create IPFS url
-            const url = data;
+            const data = JSON.stringify({ name, description, image: imageUrl });
+            const formData = new FormData();
+            formData.set("json", data);
+            const res = await axios("/api/upload-file", {
+                method: "POST",
+                data: formData,
+            });
+            /* after file is uploaded to IPFS, pass the URL to save it on Polygon */
+            const url = res.data.url;
             await createSale(url, price);
+            router.push("/search")
         } catch (error) {
             console.log("Something went wrong on createNFT ", error);
+            notifications.show({
+                message: 'Something went wrong',
+                color: "red",
+                autoClose: true,
+                withCloseButton: true,
+            })
         }
     }
 
@@ -185,7 +218,7 @@ function NFTMarketplaceContextProvider({ children }: any) {
 
             const data = await contract.fetchMarketItem();
 
-            const items = await Promise.all(
+            const items: INFTItemData[] = await Promise.all(
                 data.map(async ({ tokenId, seller, owner, price: unformattedPrice }: any) => {
                     const tokenURI = await contract.tokenURI(tokenId);
                     const { data } = await axios.get(tokenURI);
@@ -204,9 +237,10 @@ function NFTMarketplaceContextProvider({ children }: any) {
                     }
                 })
             )
+            console.log("items", items)
             return items;
         } catch (error) {
-
+            return []
         }
     }
 
@@ -218,7 +252,7 @@ function NFTMarketplaceContextProvider({ children }: any) {
                 await contract.fetchItemsLists() :
                 await contract.fetchMyNFT();
 
-            const items = await Promise.all(
+            const items: INFTItemData[] = await Promise.all(
                 data.map(async ({ tokenId, seller, owner, price: unformattedPrice }: any) => {
                     const tokenURI = await contract.tokenURI(tokenId);
                     const { data } = await axios.get(tokenURI);
@@ -241,6 +275,7 @@ function NFTMarketplaceContextProvider({ children }: any) {
             return items;
         } catch (error) {
             console.log("Something went wrong on fetchMyNFTs ", error);
+            return []
         }
     }
 
