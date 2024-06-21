@@ -1,0 +1,44 @@
+.upload_box_slider_box_cont{
+    overflow-x: auto;
+}
+.upload_box_slider_box{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    min-width: 250px;
+    position: relative;
+    @mixin hover {
+        background-color: var(--mantine-color-teal-filled);
+    color: var(--mantine-color-white);
+    }
+}
+
+.upload_box_slider_box_active{
+    background-color: var(--mantine-color-teal-filled);
+    color: var(--mantine-color-white);
+}
+
+.upload_box_slider_box_img_cont{    
+    
+}
+.upload_box_slider_box_img_cont img{
+ 
+}
+
+.upload_box_slider_box_tick{        
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--mantine-color-teal-filled-hover);
+    color: var(--mantine-color-white);
+}
+.upload_box_slider_box_tick_active{
+    display: flex;
+}

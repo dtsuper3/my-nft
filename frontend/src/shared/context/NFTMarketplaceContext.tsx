@@ -137,7 +137,7 @@ function NFTMarketplaceContextProvider({ children }: any) {
     // Upload to IPFS
     const uploadToIPFS = async (file: any) => {
         try {
-            const url = ""
+            const url = axios("/api/upload-file",)
             return url;
         } catch (error) {
             console.log("Something went wrong on uploadToIPFS ", error);

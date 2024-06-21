@@ -1,3 +1,4 @@
+"use client"
 import React, { useState } from 'react'
 
 import { MdNotifications } from "react-icons/md";
