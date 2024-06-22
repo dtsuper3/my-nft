@@ -11,6 +11,7 @@ import { Box, Button, Container, Group, TextInput } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 
 import { Discover, HelpCenter, Notification, Profile, Sidebar } from "@/shared/components/Navbar";
+import { ColorSchemeToggle } from '../ColorSchemeToggle';
 
 function Navbar() {
     const { currentAccount, connectWallet } = useNFTMarketplace();
@@ -92,6 +93,7 @@ function Navbar() {
                         <Box className={style.navbar_container_right_profile}>
                             <Profile />
                         </Box>
+                        <ColorSchemeToggle />
                     </Group>
                 </Group>
             </Box>

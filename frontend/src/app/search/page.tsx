@@ -1,4 +1,5 @@
 "use client";
+import NftItem from '@/shared/components/NftItem';
 import { useNFTMarketplace } from '@/shared/context/NFTMarketplaceContext';
 import MainLayout from '@/shared/layout/MainLayout';
 import { INFTItemData } from '@/types/NFT';
@@ -41,30 +42,7 @@ function Search() {
                         :
                         items.map(i => (
                             <Grid.Col span={{ base: 12, lg: 4 }} key={i.tokenId}>
-                                <Card shadow="sm" padding="lg" radius="md" withBorder>
-                                    <Card.Section>
-                                        <Image
-                                            src={i.image}
-                                            height={300}
-                                            style={{
-                                                objectFit:"fill"
-                                            }}
-                                            alt="Norway"
-                                        />
-                                    </Card.Section>
-                                    <Text size="md">
-                                        #{i.tokenId}
-                                    </Text>
-                                    <Text size="md">
-                                        {i.name}
-                                    </Text>
-                                    <Text size="sm" c="dimmed">
-                                        {i.description}
-                                    </Text>
-                                    <Text size="md">
-                                        {i.price} ETH
-                                    </Text>
-                                </Card>
+                                <NftItem data={i} />
                             </Grid.Col>
                         ))
                 }

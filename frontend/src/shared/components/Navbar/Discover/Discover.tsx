@@ -36,7 +36,7 @@ function Discover() {
   ]
   return (
     <Menu
-      shadow="lg"      
+      shadow="lg"
       width={200}
       trigger="hover"
       openDelay={100}
@@ -45,7 +45,7 @@ function Discover() {
         <Button
           variant='white'
           color='dark'
-          >
+        >
           <Text>Discover</Text>
           <BiChevronDown
             size={22}
@@ -56,8 +56,15 @@ function Discover() {
       <Menu.Dropdown>
         {
           data.map(i => (
-            <Menu.Item key={i.name}>              
-              <Link href={i.href}>{i.name}</Link>
+            <Menu.Item key={i.name}>
+              <Button                
+                variant='transparent'
+                color='gray'
+                w={"100%"}
+                component={Link}
+                href={i.href}>
+                {i.name}
+              </Button>
             </Menu.Item>
           ))
         }

@@ -63,7 +63,7 @@ interface NFTMarketplaceContextType {
     uploadToIPFS: (file: any) => Promise<string | null>;
     createNFT: (formInput: any) => void,
     fetchNFTS: () => Promise<INFTItemData[]>;
-    fetchMyNFTsOrListedNFTs: (type: string) => Promise<INFTItemData[]>;
+    fetchMyNFTsOrListedNFTs: (type?: "fetchItemsListed") => Promise<INFTItemData[]>;
     buyNFT: (nft: any) => void;
     createSale: (url: string, formInputPrice: string, isReselling?: any, id?: any) => void;
     currentAccount: string;
@@ -245,7 +245,7 @@ function NFTMarketplaceContextProvider({ children }: any) {
     }
 
     // Fetching my NFT of listed NFTS
-    const fetchMyNFTsOrListedNFTs = async (type: string) => {
+    const fetchMyNFTsOrListedNFTs = async (type?: string) => {
         try {
             const contract: any = await connectingWithSmartContract();
             const data = type === "fetchItemsListed" ?

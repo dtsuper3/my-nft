@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "local:node":"npx hardhat node",
-    "local:deploy":"npx hardhat run scripts/deploy.ts --network localhost"
+    "local:node": "npx hardhat node",
+    "local:deploy": "npx hardhat run scripts/deploy.ts --network localhost",
+    "compile": "npx hardhat compile"
   },
   "author": "",
   "license": "ISC",
@@ -27,6 +28,7 @@
     "@types/mocha": ">=9.1.0",
     "@types/node": ">=18.0.0",
     "chai": "^4.2.0",
+    "dotenv": "^16.4.5",
     "ethers": "^6.4.0",
     "hardhat": "^2.22.5",
     "hardhat-gas-reporter": "^1.0.8",
