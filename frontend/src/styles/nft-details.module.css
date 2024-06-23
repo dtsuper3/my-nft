@@ -1,0 +1,8 @@
+.nft-detail-left{
+padding: 0;
+}
+
+.nft-detail-left img{
+    min-width: 100%;
+    object-fit: cover;
+}

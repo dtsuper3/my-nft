@@ -63,14 +63,14 @@ interface NFTMarketplaceContextType {
     uploadToIPFS: (file: any) => Promise<string | null>;
     createNFT: (formInput: any) => void,
     fetchNFTS: () => Promise<INFTItemData[]>;
-    fetchMyNFTsOrListedNFTs: (type?: "fetchItemsListed") => Promise<INFTItemData[]>;
+    fetchMyNFTsOrListedNFTs: (type?: "fetchItemsListed" | "fetchMyNfts") => Promise<INFTItemData[]>;
     buyNFT: (nft: any) => void;
     createSale: (url: string, formInputPrice: string, isReselling?: any, id?: any) => void;
     currentAccount: string;
     transferEther: (address: string, ether: string, message: string) => void;
     isLoading: boolean;
     accountBalance: string;
-    getAllTransactions: () => void;
+    getAllTransactions: (setLoader: any) => void;
     transactionCount: string | undefined;
     transactions: any[];
 }
@@ -213,8 +213,11 @@ function NFTMarketplaceContextProvider({ children }: any) {
     // Fetch all NFTS
     const fetchNFTS = async () => {
         try {
-            const provider = new ethers.providers.JsonRpcProvider();
-            const contract = fetchContract(provider);
+
+            // const provider = new ethers.providers.JsonRpcProvider();
+            // const provider = new ethers.providers.Web3Provider(window.ethereum);
+            // const contract = fetchContract(provider);
+            const contract: any = await connectingWithSmartContract()
 
             const data = await contract.fetchMarketItem();
 
@@ -237,10 +240,10 @@ function NFTMarketplaceContextProvider({ children }: any) {
                     }
                 })
             )
-            console.log("items", items)
             return items;
         } catch (error) {
-            return []
+            console.log("Something went wrong on fetchNFTS ", error);
+            return [];
         }
     }
 
@@ -251,7 +254,7 @@ function NFTMarketplaceContextProvider({ children }: any) {
             const data = type === "fetchItemsListed" ?
                 await contract.fetchItemsLists() :
                 await contract.fetchMyNFT();
-
+            // console.log("data", data)
             const items: INFTItemData[] = await Promise.all(
                 data.map(async ({ tokenId, seller, owner, price: unformattedPrice }: any) => {
                     const tokenURI = await contract.tokenURI(tokenId);
@@ -287,6 +290,7 @@ function NFTMarketplaceContextProvider({ children }: any) {
             const transaction = await contract.createMarketSale(nft.tokenId, { value: price });
 
             await transaction.wait();
+            router.push("/author-profile")
         } catch (error) {
             console.log("Something went wrong on buyNFT ", error);
         }
@@ -325,9 +329,10 @@ function NFTMarketplaceContextProvider({ children }: any) {
     }
 
     // Fetch all transaction    
-    const getAllTransactions = async () => {
+    const getAllTransactions = async (setLoader: any) => {
         try {
             if (window.ethereum) {
+                setLoader(true);
                 const contract: any = await connectToTransferFunds();
                 const availableTransactions = await contract.getAllTransactions();
 
@@ -342,9 +347,11 @@ function NFTMarketplaceContextProvider({ children }: any) {
                 ))
 
                 setTransactions(readTransaction);
+                setLoader(false);
             }
         } catch (error) {
             console.log("Something went wrong on getAllTransactions ", error)
+            setLoader(false);
         }
     }
 

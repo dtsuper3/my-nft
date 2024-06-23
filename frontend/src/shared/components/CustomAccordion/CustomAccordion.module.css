@@ -1,0 +1,8 @@
+.acc-item{
+    border: none;
+}
+
+.acc-item-control{
+    border-radius: var(--mantine-radius-md);
+    color:var(--mantine-color-white);
+}

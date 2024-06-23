@@ -1,4 +1,4 @@
-import { Skeleton } from '@mantine/core';
+import { Flex, Skeleton } from '@mantine/core';
 import { type LottieComponentProps } from 'lottie-react';
 import { Suspense, lazy, useState, useEffect } from 'react';
 
@@ -44,7 +44,9 @@ export function LazyLottie<T extends Record<string, unknown>>({
     };
   }, [getAnimationData]);
 
-  if (loading) return <Skeleton height={props.height} width={props.width} />;
+  if (loading) return <Flex justify={"center"} align={"center"}>
+    <Skeleton height={props.height} width={props.width} />
+  </Flex>
 
   return (
     <Suspense fallback={<Skeleton height={props.height} width={props.width} />}>

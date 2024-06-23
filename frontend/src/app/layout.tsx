@@ -6,6 +6,7 @@ import { Footer, Navbar } from '@/shared/components';
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
 import { Notifications } from '@mantine/notifications';
+import NextTopLoader from 'nextjs-toploader';
 
 export const metadata = {
     title: 'Mantine Next.js template',
@@ -25,6 +26,7 @@ export default function RootLayout({ children }: { children: any }) {
             </head>
             <body>
                 <MantineProvider theme={theme}>
+                    <NextTopLoader />
                     <NFTMarketplaceContextProvider>
                         <Notifications />
                         <Navbar />

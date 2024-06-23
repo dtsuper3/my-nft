@@ -2,25 +2,30 @@
 import NftItem from '@/shared/components/NftItem';
 import { useNFTMarketplace } from '@/shared/context/NFTMarketplaceContext';
 import MainLayout from '@/shared/layout/MainLayout';
+import { objectToSearchParams } from '@/shared/utils/common';
 import { INFTItemData } from '@/types/NFT';
-import { Box, Card, Grid, Group, Image, Skeleton, Text } from '@mantine/core';
+import { Card, Grid, Skeleton } from '@mantine/core';
+import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 
 
 
 function Search() {
     const [isLoading, setIsLoading] = useState(false);
+    const router = useRouter();
     const [items, setItems] = useState<INFTItemData[]>([]);
     const { fetchNFTS } = useNFTMarketplace();
     useEffect(() => {
-        async function fetData() {
+        async function fetchData() {
             setIsLoading(true);
             const items = await fetchNFTS();
             setItems(items);
             setIsLoading(false)
         }
-        fetData();
+        fetchData();
     }, []);
+
+
     return (
         <MainLayout>
             <Grid

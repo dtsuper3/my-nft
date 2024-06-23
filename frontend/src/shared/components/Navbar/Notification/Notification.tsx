@@ -4,8 +4,8 @@ import { MdNotifications } from 'react-icons/md'
 
 function Notification() {
   return (
-    <Box>
-      <MdNotifications size={30} />
+    <Box mt={"xs"}>
+      <MdNotifications size={28} />
     </Box>
   )
 }

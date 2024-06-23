@@ -1,13 +1,24 @@
+import React from 'react'
 import { INFTItemData } from '@/types/NFT'
 import { Card, Image, Text } from '@mantine/core'
-import React from 'react'
+import styles from './NftItem.module.css';
+import { useRouter } from 'next/navigation';
+import { objectToSearchParams } from '@/shared/utils/common';
 
 interface INftItem {
     data: INFTItemData;
+    onClick?: () => void
 }
-function NftItem({data}:INftItem) {
+function NftItem({ data, onClick }: INftItem) {
+    const router = useRouter();
     return (
-        <Card shadow="sm" padding="lg" radius="md" withBorder>
+        <Card
+            shadow="sm"
+            padding="lg"
+            radius="md"
+            withBorder
+            className={styles.nftItemCard}
+            onClick={() => onClick ? onClick() : router.push(`/nft-detail?${objectToSearchParams(data)}`)}>
             <Card.Section>
                 <Image
                     src={data.image}

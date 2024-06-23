@@ -4,6 +4,9 @@ const nextConfig = {
   experimental: {
     optimizePackageImports: ['@mantine/core', '@mantine/hooks'],
   },
+  images: {
+    domains: ['ivory-indirect-elk-835.mypinata.cloud'],
+  },
 };
 
 export default nextConfig;

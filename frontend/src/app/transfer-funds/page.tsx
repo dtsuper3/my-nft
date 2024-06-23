@@ -5,21 +5,22 @@ import styles from "@/styles/transferFunds.module.css";
 import { useNFTMarketplace } from '@/shared/context/NFTMarketplaceContext';
 import Image from 'next/image';
 import { FaEthereum, FaUserAlt } from 'react-icons/fa';
-import { Box, Button, Card, Container, Flex, Grid, Loader, Modal, Text, TextInput, Textarea, Title } from '@mantine/core';
+import { Box, Button, Card, Container, Flex, Grid, Loader, Modal, Skeleton, Text, TextInput, Textarea, Title } from '@mantine/core';
 import { LazyLottie } from '@/shared/components/LazyLottie';
 import { useDisclosure } from '@mantine/hooks';
 
 
 function TransferFunds() {
-    const { currentAccount, transferEther, isLoading, accountBalance, transactions, transactionCount, getAllTransactions } = useNFTMarketplace();
+    const { currentAccount, transferEther, isLoading, accountBalance, transactions, getAllTransactions } = useNFTMarketplace();
     const [transferAccount, setTransferAccount] = useState("");
     const [transferAmount, setTransferAmount] = useState("");
     const [message, setMessage] = useState("");
     const [readMessage, setReadMessage] = useState("");
     const [opened, { open, close }] = useDisclosure(false);
+    const [transactionsLoader, setTransactionsLoader] = useState(false);
 
     useEffect(() => {
-        getAllTransactions();
+        getAllTransactions(setTransactionsLoader);
     }, []);
 
     const handleTransferFunds = useCallback(async () => {
@@ -115,8 +116,8 @@ function TransferFunds() {
                         mt={"md"}
                         className={styles.transfer_box_history}>
                         {
-                            transactions.map((el, i) => {
-                                return (
+                            transactionsLoader ?
+                                [1, 2, 3].map(i => (
                                     <Grid.Col
                                         span={{ base: 12, md: 4, lg: 4 }}
                                         key={i + 1}>
@@ -124,42 +125,63 @@ function TransferFunds() {
                                             shadow="sm"
                                             padding="lg"
                                             radius="md"
-                                            withBorder
-                                            className={styles.transfer_box_history_item}>
-                                            <Image
-                                                src={"/images/transfer-ether.gif"}
-                                                width={80}
-                                                height={80}
-                                                alt='transferEther'
-                                            />
-                                            <Box mt={"md"} className={styles.transfer_box_history_item_info}>
-                                                <Text component='p'>
-                                                    <Text component='strong'>Transfer ID: </Text>
-                                                    <Text component='span'>#{i + 1} {el.timestamp}</Text>
-                                                </Text>
-                                                <Text component='p'>
-                                                    <Text component='strong'>Amount:</Text> {el.amount} ETH
-                                                </Text>
-                                                <Text component='p'>
-                                                    <Text component='strong'>From: </Text>
-                                                    <Text component='span'>{el.addressFrom}</Text>
-                                                </Text>
-                                                <Text component='p'>
-                                                    <Text component='strong'>To: </Text>
-                                                    <Text component='span'>{el.addressTo}</Text>
-                                                </Text>
-                                                <Button
-                                                    mt={"md"}
-                                                    fullWidth
-                                                    onClick={() => {
-                                                        setReadMessage(el.message);
-                                                        open()
-                                                    }}>Read Message</Button>
+                                            withBorder>
+                                            <Skeleton height={80} width={80} mb="md" />
+                                            <Box mt={"md"}>
+                                                <Skeleton height={20} width={"70%"} mb="md" />
+                                                <Skeleton height={20} width={"70%"} mb="md" />
+                                                <Skeleton height={20} width={"80%"} mb="md" />
+                                                <Skeleton height={20} width={"80%"} mb="md" />
                                             </Box>
                                         </Card>
                                     </Grid.Col>
-                                )
-                            })
+                                ))
+                                :
+                                transactions.map((el, i) => {
+                                    return (
+                                        <Grid.Col
+                                            span={{ base: 12, md: 4, lg: 4 }}
+                                            key={i + 1}>
+                                            <Card
+                                                shadow="sm"
+                                                padding="lg"
+                                                radius="md"
+                                                withBorder
+                                                className={styles.transfer_box_history_item}>
+                                                <Image
+                                                    src={"/images/transfer-ether.gif"}
+                                                    width={80}
+                                                    height={80}
+                                                    alt='transferEther'
+                                                />
+                                                <Box mt={"md"} className={styles.transfer_box_history_item_info}>
+                                                    <Text component='p'>
+                                                        <Text component='strong'>Transfer ID: </Text>
+                                                        <Text component='span'>#{i + 1} {el.timestamp}</Text>
+                                                    </Text>
+                                                    <Text component='p'>
+                                                        <Text component='strong'>Amount:</Text> {el.amount} ETH
+                                                    </Text>
+                                                    <Text component='p'>
+                                                        <Text component='strong'>From: </Text>
+                                                        <Text component='span'>{el.addressFrom}</Text>
+                                                    </Text>
+                                                    <Text component='p'>
+                                                        <Text component='strong'>To: </Text>
+                                                        <Text component='span'>{el.addressTo}</Text>
+                                                    </Text>
+                                                    <Button
+                                                        mt={"md"}
+                                                        fullWidth
+                                                        onClick={() => {
+                                                            setReadMessage(el.message);
+                                                            open()
+                                                        }}>Read Message</Button>
+                                                </Box>
+                                            </Card>
+                                        </Grid.Col>
+                                    )
+                                })
                         }
                     </Grid>
                     <Modal opened={opened} onClose={close} title="Transaction Message" centered>
