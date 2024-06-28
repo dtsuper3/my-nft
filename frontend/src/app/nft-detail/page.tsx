@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { useNFTMarketplace } from '@/shared/context/NFTMarketplaceContext'
 import MainLayout from '@/shared/layout/MainLayout';
 import { Accordion, Box, Button, Card, Fieldset, Grid, Text } from '@mantine/core';
@@ -37,7 +37,7 @@ function NftDetail() {
                                 src={data.image}
                                 width={600}
                                 height={600}
-                                alt={data.name}
+                                alt={data.name}                                
                             />
                         }
                     </Card>

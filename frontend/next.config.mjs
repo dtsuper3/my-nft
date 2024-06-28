@@ -7,6 +7,9 @@ const nextConfig = {
   images: {
     domains: ['ivory-indirect-elk-835.mypinata.cloud'],
   },
+  experimental: {
+    missingSuspenseWithCSRBailout: false,
+  },
 };
 
 export default nextConfig;
